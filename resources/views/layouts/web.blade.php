@@ -5,8 +5,27 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $title ?? 'FrozenBytes' }}</title>
+    <meta name="description" content="{{ $metaDescription ?? 'FrozenBytes delivers web engineering services, projects, and product insights.' }}">
+    <meta name="robots" content="index,follow">
+    <link rel="canonical" href="{{ $canonicalUrl ?? url()->current() }}">
+    <meta property="og:type" content="{{ $ogType ?? 'website' }}">
+    <meta property="og:title" content="{{ $title ?? 'FrozenBytes' }}">
+    <meta property="og:description" content="{{ $metaDescription ?? 'FrozenBytes delivers web engineering services, projects, and product insights.' }}">
+    <meta property="og:url" content="{{ $canonicalUrl ?? url()->current() }}">
+    @if(!empty($ogImage))
+        <meta property="og:image" content="{{ $ogImage }}">
+    @endif
+    <meta name="twitter:card" content="{{ !empty($ogImage) ? 'summary_large_image' : 'summary' }}">
+    <meta name="twitter:title" content="{{ $title ?? 'FrozenBytes' }}">
+    <meta name="twitter:description" content="{{ $metaDescription ?? 'FrozenBytes delivers web engineering services, projects, and product insights.' }}">
+    @if(!empty($ogImage))
+        <meta name="twitter:image" content="{{ $ogImage }}">
+    @endif
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    @if(!empty($jsonLd))
+        <script type="application/ld+json">{!! $jsonLd !!}</script>
+    @endif
     @livewireStyles
 </head>
 

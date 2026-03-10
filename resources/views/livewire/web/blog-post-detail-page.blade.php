@@ -11,6 +11,17 @@
                 <p class="small text-secondary mb-3">{{ $post->published_at?->format('M d, Y') }}</p>
                 <p class="text-secondary">{{ $post->excerpt }}</p>
                 <div class="text-secondary">{!! nl2br(e($post->content)) !!}</div>
+                @if($relatedPosts->isNotEmpty())
+                    <hr>
+                    <h2 class="h5">Related Posts</h2>
+                    <ul class="mb-0">
+                        @foreach($relatedPosts as $relatedPost)
+                            <li>
+                                <a href="{{ route('web.blog.show', ['post' => $relatedPost->slug]) }}">{{ $relatedPost->title }}</a>
+                            </li>
+                        @endforeach
+                    </ul>
+                @endif
             </div>
         </article>
     </section>

@@ -18,10 +18,56 @@ use App\Livewire\Web\HomePage;
 use App\Livewire\Web\ProjectDetailPage;
 use App\Livewire\Web\ProjectsPage;
 use App\Livewire\Web\ReviewsRatingsPage;
+use App\Livewire\Web\ReviewDetailPage;
 use App\Livewire\Web\ServiceDetailPage;
 use App\Livewire\Web\ServicesPage;
+use App\Models\BlogPost;
+use App\Models\Project;
+use App\Models\Service;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/sitemap.xml', function () {
+    $urls = collect([
+        ['loc' => route('web.home'), 'lastmod' => now()],
+        ['loc' => route('web.about'), 'lastmod' => now()],
+        ['loc' => route('web.services'), 'lastmod' => now()],
+        ['loc' => route('web.projects'), 'lastmod' => now()],
+        ['loc' => route('web.blog'), 'lastmod' => now()],
+        ['loc' => route('web.contact'), 'lastmod' => now()],
+        ['loc' => route('web.reviews'), 'lastmod' => now()],
+    ]);
+
+    $serviceUrls = Service::query()
+        ->where('is_published', true)
+        ->get()
+        ->map(fn (Service $service) => [
+            'loc' => route('web.services.show', ['service' => $service->slug ?: $service->id]),
+            'lastmod' => $service->updated_at,
+        ]);
+
+    $projectUrls = Project::query()
+        ->where('is_published', true)
+        ->get()
+        ->map(fn (Project $project) => [
+            'loc' => route('web.projects.show', ['project' => $project->slug ?: $project->id]),
+            'lastmod' => $project->updated_at,
+        ]);
+
+    $blogUrls = BlogPost::query()
+        ->where('is_published', true)
+        ->get()
+        ->map(fn (BlogPost $post) => [
+            'loc' => route('web.blog.show', ['post' => $post->slug]),
+            'lastmod' => $post->updated_at,
+        ]);
+
+    $allUrls = $urls->concat($serviceUrls)->concat($projectUrls)->concat($blogUrls);
+
+    $xml = view('sitemap', ['urls' => $allUrls])->render();
+
+    return response($xml, 200)->header('Content-Type', 'application/xml');
+})->name('sitemap.xml');
 
 Route::get('/media/{path}', function (string $path) {
     abort_unless(Storage::disk('public')->exists($path), 404);
@@ -39,6 +85,7 @@ Route::get('/blog', BlogPage::class)->name('web.blog');
 Route::get('/blog/{post:slug}', BlogPostDetailPage::class)->name('web.blog.show');
 Route::get('/contact-us', ContactPage::class)->name('web.contact');
 Route::get('/reviews-ratings', ReviewsRatingsPage::class)->name('web.reviews');
+Route::get('/reviews-ratings/{review}', ReviewDetailPage::class)->name('web.reviews.show');
 
 Route::middleware(['auth', 'role:admin'])
     ->prefix('app')

@@ -23,12 +23,12 @@
 
 @if($title || $subtitle)
     <section class="container mt-2 mb-5">
-        <div class="p-5 rounded-4 text-white shadow-sm" style="{{ $heroStyle }}">
+        <div class="p-5 rounded-4 text-white text-center shadow-sm" style="{{ $heroStyle }}">
             @if($title)
                 <h1 class="display-6 fw-bold mb-2">{{ $title }}</h1>
             @endif
             @if($subtitle)
-                <p class="lead mb-0">{{ $subtitle }}</p>
+                <p class="lead mb-0 mx-auto" style="max-width: 840px;">{{ $subtitle }}</p>
             @endif
             @if($ctaText && $ctaUrl)
                 <a href="{{ $ctaUrl }}" class="btn btn-light mt-3">{{ $ctaText }}</a>
